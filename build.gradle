@@ -1,0 +1,58 @@
+// Gradle 프로젝트를 Spring Boot 프로젝트로 변경
+// 스프링 이니셜라이저를 사용하지 않음
+
+// Plugin 의존성 관리를 위한 설정
+buildscript {
+    //build.gradle에서 쓰는 전역변수 ext
+    ext {
+        //2.1.9.RELEASE라는 내용을 변수에 담음. 이를 dependencies (의존성)에 사용
+        //스프링 부트 그레이들 플러그인의 2.1.9.RELEASE를 의존성으로 받겠다.
+        springBootVersion = '2.1.9.RELEASE'
+    }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+//앞서 선언한 플러그인 의존성들을 적용할지를 결정.
+//이하 4개는 자바와 스프링부트를 사용하기 위한 필수 플러그인이므로 항상 추가해 주면 된다.
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+//스프링 부트의 의존성을 관리해주는 플러그인이므로 반드시 추가해야 한다.
+apply plugin: 'io.spring.dependency-management'
+
+group 'org.example'
+version '1.0.1-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
+
+//각종 의존성(library)을 어떤 repository에서 받아올지를 정하는 부분.
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+//프로젝트 개발에 필요한 의존성을 선언하는 곳
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.projectlombok:lombok')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('com.h2database:h2')
+    compile('org.springframework.boot:spring-boot-starter-mustache')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    //특정 버전을 명시하지 않아야 맨 위 'classpath' 내부에 명시된 버전을 사용함.
+    //이렇게 하면 각 라이브러리의 버전 관리가 한곳으로 집중되고, 따라서 버전 충돌을 예방할 수 있다.
+
+    compile('org.springframework.boot:spring-boot-starter-oauth2-client')   //oauth2를 위한 dependency
+    compile('org.springframework.session:spring-session-jdbc')  //spring-seesion-jdbc를 위한 dependency
+    compile("org.mariadb.jdbc:mariadb-java-client")
+
+    //spring security 테스트를 위한 도구
+    testCompile("org.springframework.security:spring-security-test")
+
+    
+}
